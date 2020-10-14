@@ -50,4 +50,13 @@ public class EmployeePayrollService {
 			return new EmployeePayrollFileIOService().countEntries();
 		return 0;
 	}
+
+	// Print Data
+	public void printData(IOService ioservice) {
+		if (ioservice.equals(IOService.CONSOLE_IO))
+			System.out.println("Writing to console\n" + employeePayrollList);
+		else if (ioservice.equals(IOService.FILE_IO))
+			new EmployeePayrollFileIOService().printData();
+	}
+
 }

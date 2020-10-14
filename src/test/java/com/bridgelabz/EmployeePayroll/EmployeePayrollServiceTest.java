@@ -25,6 +25,7 @@ public class EmployeePayrollServiceTest {
 	public void given3EmployeeWhenWrittenToFileShouldMatchEmployeeEntries()
 	{		
 		employeePayrollService.writeData(IOService.FILE_IO);
+		employeePayrollService.printData(IOService.FILE_IO);
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
 		assertEquals(2,entries);
 	}
