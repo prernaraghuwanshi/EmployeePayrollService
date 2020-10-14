@@ -23,15 +23,19 @@ public class EmployeePayrollService {
 		this.employeePayrollList = new ArrayList<>();
 	}
 
-	// Read data from Console
-	private void readDataConsole(Scanner consoleInputReader) {
-		System.out.println("Enter Employee ID: ");
-		int id = consoleInputReader.nextInt();
-		System.out.println("Enter Employee Name: ");
-		String name = consoleInputReader.next();
-		System.out.println("Enter Employee Salary: ");
-		double salary = consoleInputReader.nextDouble();
-		employeePayrollList.add(new EmployeePayrollData(id, name, salary));
+	// Read data from Console or File
+	public void readData(IOService ioservice) {
+		if (ioservice.equals(IOService.CONSOLE_IO)) {
+			Scanner consoleInputReader = new Scanner(System.in);
+			System.out.println("Enter Employee ID: ");
+			int id = consoleInputReader.nextInt();
+			System.out.println("Enter Employee Name: ");
+			String name = consoleInputReader.next();
+			System.out.println("Enter Employee Salary: ");
+			double salary = consoleInputReader.nextDouble();
+			employeePayrollList.add(new EmployeePayrollData(id, name, salary));
+		} else if (ioservice.equals(IOService.FILE_IO))
+			employeePayrollList = new EmployeePayrollFileIOService().readData();
 	}
 
 	// Write data either to console or file
@@ -42,7 +46,7 @@ public class EmployeePayrollService {
 			new EmployeePayrollFileIOService().writeData(employeePayrollList);
 	}
 
-	// Counting entries of employees
+	// Counting entries of employees when written to file or console
 	public long countEntries(IOService ioservice) {
 		if (ioservice.equals(IOService.CONSOLE_IO))
 			return employeePayrollList.size();
@@ -57,6 +61,11 @@ public class EmployeePayrollService {
 			System.out.println("Writing to console\n" + employeePayrollList);
 		else if (ioservice.equals(IOService.FILE_IO))
 			new EmployeePayrollFileIOService().printData();
+	}
+
+	// Count of employees when read from file and stored to employeePayrollList
+	public long employeeCount() {
+		return employeePayrollList.size();
 	}
 
 }
