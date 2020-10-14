@@ -34,17 +34,20 @@ public class EmployeePayrollService {
 		employeePayrollList.add(new EmployeePayrollData(id, name, salary));
 	}
 
-	// Write data
+	// Write data either to console or file
 	public void writeData(IOService ioservice) {
 		if (ioservice.equals(IOService.CONSOLE_IO))
 			System.out.println("Writing to console\n" + employeePayrollList);
+		else if (ioservice.equals(IOService.FILE_IO))
+			new EmployeePayrollFileIOService().writeData(employeePayrollList);
 	}
 
-	public static void main(String args[]) {
-		ArrayList<EmployeePayrollData> employeePayrollList = new ArrayList<>();
-		EmployeePayrollService s = new EmployeePayrollService(employeePayrollList);
-		Scanner consoleInputScanner = new Scanner(System.in);
-		s.readDataConsole(consoleInputScanner);
-		s.writeData(IOService.CONSOLE_IO);
+	// Counting entries of employees
+	public long countEntries(IOService ioservice) {
+		if (ioservice.equals(IOService.CONSOLE_IO))
+			return employeePayrollList.size();
+		else if (ioservice.equals(IOService.FILE_IO))
+			return new EmployeePayrollFileIOService().countEntries();
+		return 0;
 	}
 }
