@@ -1,2 +1,3 @@
-Id : 1 Name : PR Salary : 100.0
-Id : 2 Name : BO Salary : 200.0
+EmployeePayrollData{id=1, name='Harry', startDate=2020-09-09, phone_number='9090909090', gender='M', address='London'}
+EmployeePayrollData{id=2, name='Taylor', startDate=2018-08-07, phone_number='2323232323', gender='F', address='Malibu'}
+EmployeePayrollData{id=3, name='Zayn', startDate=2019-01-01, phone_number='3434343434', gender='M', address='New York'}

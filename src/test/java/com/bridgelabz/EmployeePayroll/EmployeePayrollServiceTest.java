@@ -1,7 +1,10 @@
 package com.bridgelabz.EmployeePayroll;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -14,11 +17,12 @@ public class EmployeePayrollServiceTest {
 	@Before
 	public void initialize()
 	{
-		EmployeePayrollData[] arrayOfEmps = {
-				new EmployeePayrollData(1, "PR", 100.0),
-				new EmployeePayrollData(2, "BO", 200.00)
+		EmployeeData[] arrayOfEmps = {
+				new EmployeeData(1, "Harry", LocalDate.of(2020, 9, 9), "9090909090", "M", "London"),
+				new EmployeeData(2, "Taylor", LocalDate.of(2018, 8, 7), "2323232323", "F", "Malibu"),
+				new EmployeeData(3, "Zayn", LocalDate.of(2019, 1, 1), "3434343434", "M", "New York")
 		};
-		
+
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
 	}
 	@Test
@@ -27,14 +31,13 @@ public class EmployeePayrollServiceTest {
 		employeePayrollService.writeData(IOService.FILE_IO);
 		employeePayrollService.printData(IOService.FILE_IO);
 		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
-		assertEquals(2,entries);
+		assertEquals(3,entries);
 	}
 	@Test
-	public void givenFileWhenReadingFromFileShouldMatchEmployeeCount()
-	{		
+	public void givenFileWhenReadingFromFileShouldMatchEmployeeCount() throws SQLException {
 		employeePayrollService.readData(IOService.FILE_IO);
 		long entries = employeePayrollService.employeeCount();
-		assertEquals(2,entries);
+		assertEquals(3,entries);
 	}
 
 }
