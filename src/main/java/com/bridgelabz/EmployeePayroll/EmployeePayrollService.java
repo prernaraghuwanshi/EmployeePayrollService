@@ -9,20 +9,21 @@ import java.util.Scanner;
 public class EmployeePayrollService {
 
     public enum IOService {
-        CONSOLE_IO, FILE_IO
+        CONSOLE_IO, FILE_IO, DB_IO
     }
 
     public static List<EmployeeData> employeePayrollList;
-
-    // Parameterized constructor
-    public EmployeePayrollService(List<EmployeeData> employeePayrollList) {
-        this();
-        this.employeePayrollList = employeePayrollList;
-    }
+    private static EmployeePayrollDBService employeePayrollDBService;
 
     // Default constructor
     public EmployeePayrollService() {
-        this.employeePayrollList = new ArrayList<>();
+        employeePayrollDBService = EmployeePayrollDBService.getInstance();
+    }
+
+    //Parameterized Constructor
+    public EmployeePayrollService(List<EmployeeData> employeePayrollList) {
+        this();
+        this.employeePayrollList = employeePayrollList;
     }
 
     // Read data from Console or File
@@ -47,6 +48,8 @@ public class EmployeePayrollService {
             employeePayrollList.add(new EmployeeData(id, name, startDate, phone_number, gender, address));
         } else if (ioservice.equals(IOService.FILE_IO))
             employeePayrollList = new EmployeePayrollFileIOService().readData();
+        else if (ioservice.equals(IOService.DB_IO))
+            employeePayrollList = employeePayrollDBService.readData();
     }
 
     // Write data either to console or file
