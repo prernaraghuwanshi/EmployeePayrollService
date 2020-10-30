@@ -55,4 +55,15 @@ public class EmployeePayrollServiceTest {
 		long entries = employeePayrollService.employeeCount();
 		assertEquals(3, entries);
 	}
+
+	@Test
+	public void givenNewNumberForEmployee_whenUpdated_shouldSyncWithDB() throws SQLException {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readData(IOService.DB_IO);
+		employeePayrollService.updateEmployeeNumber("Taylor", "1111333395");
+		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
+		Assert.assertTrue(result);
+
+
+	}
 }
