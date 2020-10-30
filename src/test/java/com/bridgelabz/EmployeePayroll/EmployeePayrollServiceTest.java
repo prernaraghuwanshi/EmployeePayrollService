@@ -5,8 +5,11 @@ import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,6 +17,8 @@ import com.bridgelabz.EmployeePayroll.EmployeePayrollService.IOService;
 
 public class EmployeePayrollServiceTest {
 	EmployeePayrollService employeePayrollService;
+	List<EmployeeData> employeeDataList;
+
 	@Before
 	public void initialize()
 	{
@@ -24,6 +29,10 @@ public class EmployeePayrollServiceTest {
 		};
 
 		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
+		employeeDataList = new ArrayList<>();
+		employeeDataList.add(new EmployeeData(1, "Harry", LocalDate.of(2020, 9, 9), "9090909090", "M", "London"));
+		employeeDataList.add(new EmployeeData(2, "Taylor", LocalDate.of(2018, 8, 7), "2323232323", "F", "Malibu"));
+		employeeDataList.add(new EmployeeData(3, "Zayn", LocalDate.of(2019, 1, 1), "3434343434", "M", "New York"));
 	}
 	@Test
 	public void given3EmployeeWhenWrittenToFileShouldMatchEmployeeEntries()
@@ -40,4 +49,10 @@ public class EmployeePayrollServiceTest {
 		assertEquals(3,entries);
 	}
 
+	@Test
+	public void givenEmployeeInDB_whenRetrieved_shouldMatchEmployeeCount() throws SQLException {
+		employeePayrollService.readData(IOService.DB_IO);
+		long entries = employeePayrollService.employeeCount();
+		assertEquals(3, entries);
+	}
 }
