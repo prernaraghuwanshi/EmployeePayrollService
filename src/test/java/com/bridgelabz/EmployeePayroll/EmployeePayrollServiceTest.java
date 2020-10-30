@@ -60,10 +60,17 @@ public class EmployeePayrollServiceTest {
 	public void givenNewNumberForEmployee_whenUpdated_shouldSyncWithDB() throws SQLException {
 		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
 		employeePayrollService.readData(IOService.DB_IO);
-		employeePayrollService.updateEmployeeNumber("Taylor", "1111333395");
+		employeePayrollService.updateEmployeeNumber("Taylor", "1111333390");
 		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
 		Assert.assertTrue(result);
+	}
 
-
+	@Test
+	public void givenNewNumberForEmployee_whenUpdatedUsingPreparedStatement_shouldSyncWithDB() throws SQLException {
+		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+		employeePayrollService.readData(IOService.DB_IO);
+		employeePayrollService.updateEmployeeNumberUsingPreparedStatement("Taylor", "0111333395");
+		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
+		Assert.assertTrue(result);
 	}
 }
