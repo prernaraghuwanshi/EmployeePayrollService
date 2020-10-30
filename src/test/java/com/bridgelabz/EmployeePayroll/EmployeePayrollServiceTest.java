@@ -16,61 +16,69 @@ import org.junit.Test;
 import com.bridgelabz.EmployeePayroll.EmployeePayrollService.IOService;
 
 public class EmployeePayrollServiceTest {
-	EmployeePayrollService employeePayrollService;
-	List<EmployeeData> employeeDataList;
+    EmployeePayrollService employeePayrollService;
+    List<EmployeeData> employeeDataList;
 
-	@Before
-	public void initialize()
-	{
-		EmployeeData[] arrayOfEmps = {
-				new EmployeeData(1, "Harry", LocalDate.of(2020, 9, 9), "9090909090", "M", "London"),
-				new EmployeeData(2, "Taylor", LocalDate.of(2018, 8, 7), "2323232323", "F", "Malibu"),
-				new EmployeeData(3, "Zayn", LocalDate.of(2019, 1, 1), "3434343434", "M", "New York")
-		};
+    @Before
+    public void initialize() {
+        EmployeeData[] arrayOfEmps = {
+                new EmployeeData(1, "Harry", LocalDate.of(2020, 9, 9), "9090909090", "M", "London"),
+                new EmployeeData(2, "Taylor", LocalDate.of(2018, 8, 7), "2323232323", "F", "Malibu"),
+                new EmployeeData(3, "Zayn", LocalDate.of(2019, 1, 1), "3434343434", "M", "New York")
+        };
 
-		employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
-		employeeDataList = new ArrayList<>();
-		employeeDataList.add(new EmployeeData(1, "Harry", LocalDate.of(2020, 9, 9), "9090909090", "M", "London"));
-		employeeDataList.add(new EmployeeData(2, "Taylor", LocalDate.of(2018, 8, 7), "2323232323", "F", "Malibu"));
-		employeeDataList.add(new EmployeeData(3, "Zayn", LocalDate.of(2019, 1, 1), "3434343434", "M", "New York"));
-	}
-	@Test
-	public void given3EmployeeWhenWrittenToFileShouldMatchEmployeeEntries()
-	{		
-		employeePayrollService.writeData(IOService.FILE_IO);
-		employeePayrollService.printData(IOService.FILE_IO);
-		long entries = employeePayrollService.countEntries(IOService.FILE_IO);
-		assertEquals(3,entries);
-	}
-	@Test
-	public void givenFileWhenReadingFromFileShouldMatchEmployeeCount() throws SQLException {
-		employeePayrollService.readData(IOService.FILE_IO);
-		long entries = employeePayrollService.employeeCount();
-		assertEquals(3,entries);
-	}
+        employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
+        employeeDataList = new ArrayList<>();
+        employeeDataList.add(new EmployeeData(1, "Harry", LocalDate.of(2020, 9, 9), "9090909090", "M", "London"));
+        employeeDataList.add(new EmployeeData(2, "Taylor", LocalDate.of(2018, 8, 7), "2323232323", "F", "Malibu"));
+        employeeDataList.add(new EmployeeData(3, "Zayn", LocalDate.of(2019, 1, 1), "3434343434", "M", "New York"));
+    }
 
-	@Test
-	public void givenEmployeeInDB_whenRetrieved_shouldMatchEmployeeCount() throws SQLException {
-		employeePayrollService.readData(IOService.DB_IO);
-		long entries = employeePayrollService.employeeCount();
-		assertEquals(3, entries);
-	}
+    @Test
+    public void given3EmployeeWhenWrittenToFileShouldMatchEmployeeEntries() {
+        employeePayrollService.writeData(IOService.FILE_IO);
+        employeePayrollService.printData(IOService.FILE_IO);
+        long entries = employeePayrollService.countEntries(IOService.FILE_IO);
+        assertEquals(3, entries);
+    }
 
-	@Test
-	public void givenNewNumberForEmployee_whenUpdated_shouldSyncWithDB() throws SQLException {
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		employeePayrollService.readData(IOService.DB_IO);
-		employeePayrollService.updateEmployeeNumber("Taylor", "1111333390");
-		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
-		Assert.assertTrue(result);
-	}
+    @Test
+    public void givenFileWhenReadingFromFileShouldMatchEmployeeCount() throws SQLException {
+        employeePayrollService.readData(IOService.FILE_IO);
+        long entries = employeePayrollService.employeeCount();
+        assertEquals(3, entries);
+    }
 
-	@Test
-	public void givenNewNumberForEmployee_whenUpdatedUsingPreparedStatement_shouldSyncWithDB() throws SQLException {
-		EmployeePayrollService employeePayrollService = new EmployeePayrollService();
-		employeePayrollService.readData(IOService.DB_IO);
-		employeePayrollService.updateEmployeeNumberUsingPreparedStatement("Taylor", "0111333395");
-		boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
-		Assert.assertTrue(result);
-	}
+    @Test
+    public void givenEmployeeInDB_whenRetrieved_shouldMatchEmployeeCount() throws SQLException {
+        employeePayrollService.readData(IOService.DB_IO);
+        long entries = employeePayrollService.employeeCount();
+        assertEquals(3, entries);
+    }
+
+    @Test
+    public void givenNewNumberForEmployee_whenUpdated_shouldSyncWithDB() throws SQLException {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readData(IOService.DB_IO);
+        employeePayrollService.updateEmployeeNumber("Taylor", "1111333390");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void givenNewNumberForEmployee_whenUpdatedUsingPreparedStatement_shouldSyncWithDB() throws SQLException {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readData(IOService.DB_IO);
+        employeePayrollService.updateEmployeeNumberUsingPreparedStatement("Taylor", "0111333395");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
+        Assert.assertTrue(result);
+    }
+
+    @Test
+    public void givenEmployeeDB_whenRetrivingOnDateRange_shouldReturnEmployeesWithStartDatesInRange() throws SQLException {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        employeePayrollService.readData(IOService.DB_IO);
+        List<EmployeeData> employeeData = employeePayrollService.retrieveEmployeesInDateRange(LocalDate.of(2019, 01, 01), LocalDate.of(2020, 12, 31));
+        Assert.assertEquals(2, employeeData.size());
+    }
 }
