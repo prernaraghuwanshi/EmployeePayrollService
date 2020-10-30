@@ -59,23 +59,28 @@ public class EmployeePayrollService {
         else if (ioservice.equals(IOService.FILE_IO))
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
     }
+
     public void updateEmployeeNumber(String name, String newNumber) throws SQLException {
 
-        int result = employeePayrollDBService.updateEmployeeDataUsingStatement(name,newNumber);
-        if(result == 0) return;
+        int result = employeePayrollDBService.updateEmployeeDataUsingStatement(name, newNumber);
+        if (result == 0) return;
         EmployeeData employeePayrollData = this.getEmployeePayRollData(name);
-        if(employeePayrollData != null) employeePayrollData.phone_number = newNumber;
+        if (employeePayrollData != null) employeePayrollData.phone_number = newNumber;
     }
 
     public void updateEmployeeNumberUsingPreparedStatement(String name, String newNumber) throws SQLException {
-        int result = employeePayrollDBService.updateEmployeeDataUsingPreparedStatement(name,newNumber);
-        if(result == 0) return;
+        int result = employeePayrollDBService.updateEmployeeDataUsingPreparedStatement(name, newNumber);
+        if (result == 0) return;
         EmployeeData employeePayrollData = this.getEmployeePayRollData(name);
-        if(employeePayrollData != null) employeePayrollData.phone_number = newNumber;
+        if (employeePayrollData != null) employeePayrollData.phone_number = newNumber;
+    }
+
+    public List<EmployeeData> retrieveEmployeesInDateRange(LocalDate startDate, LocalDate endDate) {
+        return employeePayrollDBService.employeeInDateRange(startDate, endDate);
     }
 
     private EmployeeData getEmployeePayRollData(String name) {
-        return  employeePayrollList.stream()
+        return employeePayrollList.stream()
                 .filter(employeePayRollDataItem -> employeePayRollDataItem.name.equals(name))
                 .findFirst()
                 .orElse(null);
@@ -83,7 +88,7 @@ public class EmployeePayrollService {
 
     public boolean checkEmployeePayrollInSyncWithDB(String name) {
         List<EmployeeData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
-        return  employeePayrollDataList.get(0).equals(getEmployeePayRollData(name));
+        return employeePayrollDataList.get(0).equals(getEmployeePayRollData(name));
     }
 
     // Counting entries of employees when written to file or console

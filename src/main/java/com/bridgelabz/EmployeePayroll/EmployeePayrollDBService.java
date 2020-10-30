@@ -9,10 +9,11 @@ public class EmployeePayrollDBService {
     String query = "Select * from employee;";
     private static PreparedStatement employeePayrollDataStatement;
     private static EmployeePayrollDBService employeePayrollDBService;
-    private EmployeePayrollDBService(){
+
+    private EmployeePayrollDBService() {
     }
 
-    public static EmployeePayrollDBService getInstance(){
+    public static EmployeePayrollDBService getInstance() {
         if (employeePayrollDBService == null)
             employeePayrollDBService = new EmployeePayrollDBService();
         return employeePayrollDBService;
@@ -68,9 +69,9 @@ public class EmployeePayrollDBService {
     public int updateEmployeeDataUsingPreparedStatement(String name, String newNumber) throws SQLException {
         String query = "update employee set phone_number= ? where name= ?";
         try (Connection connection = this.getConnection();) {
-           PreparedStatement preparedStatement = connection.prepareStatement(query);
-           preparedStatement.setString(1,newNumber);
-           preparedStatement.setString(2,name);
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, newNumber);
+            preparedStatement.setString(2, name);
             return preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,47 +79,57 @@ public class EmployeePayrollDBService {
         return 0;
     }
 
+    public List<EmployeeData> employeeInDateRange(LocalDate startDate, LocalDate endDate) {
+        String query = String.format("select * from employee where start between '%s' and '%s';", Date.valueOf(startDate), Date.valueOf(endDate));
+        List<EmployeeData> employeeDataList = new ArrayList<>();
+        try (Connection connection = this.getConnection();) {
+            Statement statement = connection.createStatement();
+            ResultSet result = statement.executeQuery(query);
+            employeeDataList = this.getEmployeePayrollData(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return employeeDataList;
+    }
+
     public List<EmployeeData> getEmployeePayrollData(String name) {
         List<EmployeeData> employeePayrollDataList = null;
-        if(employeePayrollDataStatement == null)
+        if (employeePayrollDataStatement == null)
             this.prepareStatementForEmployeeData();
         try {
             employeePayrollDataStatement.setString(1, name);
             ResultSet resultSet = employeePayrollDataStatement.executeQuery();
             employeePayrollDataList = this.getEmployeePayrollData(resultSet);
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return employeePayrollDataList;
     }
 
-    private List<EmployeeData> getEmployeePayrollData(ResultSet resultSet){
+    private List<EmployeeData> getEmployeePayrollData(ResultSet resultSet) {
         List<EmployeeData> employeePayrollDataList = new ArrayList<>();
-        try{
-            while (resultSet.next()){
+        try {
+            while (resultSet.next()) {
                 int id = resultSet.getInt("employee_id");
                 String name = resultSet.getString("name");
-                String number= resultSet.getString("phone_number");
+                String number = resultSet.getString("phone_number");
                 String address = resultSet.getString("address");
                 LocalDate startDate = resultSet.getDate("start").toLocalDate();
                 String gender = resultSet.getString("gender");
-                employeePayrollDataList.add(new EmployeeData(id,name,startDate,number,gender,address));
+                employeePayrollDataList.add(new EmployeeData(id, name, startDate, number, gender, address));
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return employeePayrollDataList;
     }
 
     private void prepareStatementForEmployeeData() {
-        try{
+        try {
             Connection connection = this.getConnection();
             String query = "select * from employee where name = ?";
             employeePayrollDataStatement = connection.prepareStatement(query);
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
