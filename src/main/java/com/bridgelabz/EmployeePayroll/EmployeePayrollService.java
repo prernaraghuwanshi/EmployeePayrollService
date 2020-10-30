@@ -61,7 +61,14 @@ public class EmployeePayrollService {
     }
     public void updateEmployeeNumber(String name, String newNumber) throws SQLException {
 
-        int result = employeePayrollDBService.updateEmployeeData(name,newNumber);
+        int result = employeePayrollDBService.updateEmployeeDataUsingStatement(name,newNumber);
+        if(result == 0) return;
+        EmployeeData employeePayrollData = this.getEmployeePayRollData(name);
+        if(employeePayrollData != null) employeePayrollData.phone_number = newNumber;
+    }
+
+    public void updateEmployeeNumberUsingPreparedStatement(String name, String newNumber) throws SQLException {
+        int result = employeePayrollDBService.updateEmployeeDataUsingPreparedStatement(name,newNumber);
         if(result == 0) return;
         EmployeeData employeePayrollData = this.getEmployeePayRollData(name);
         if(employeePayrollData != null) employeePayrollData.phone_number = newNumber;

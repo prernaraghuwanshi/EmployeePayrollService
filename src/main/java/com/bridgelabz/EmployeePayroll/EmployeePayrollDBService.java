@@ -53,15 +53,25 @@ public class EmployeePayrollDBService {
         }
         return con;
     }
-    public int updateEmployeeData(String name, String newNumber) throws SQLException {
-        return  this.updateEmployeeDataUsingStatement(name, newNumber);
-    }
 
     public int updateEmployeeDataUsingStatement(String name, String newNumber) throws SQLException {
         String query = String.format("update employee set phone_number='%s' where name='%s';", newNumber, name);
-        try (Connection connection = this.getConnection()) {
+        try (Connection connection = this.getConnection();) {
             Statement statement = connection.createStatement();
             return statement.executeUpdate(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int updateEmployeeDataUsingPreparedStatement(String name, String newNumber) throws SQLException {
+        String query = "update employee set phone_number= ? where name= ?";
+        try (Connection connection = this.getConnection();) {
+           PreparedStatement preparedStatement = connection.prepareStatement(query);
+           preparedStatement.setString(1,newNumber);
+           preparedStatement.setString(2,name);
+            return preparedStatement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
