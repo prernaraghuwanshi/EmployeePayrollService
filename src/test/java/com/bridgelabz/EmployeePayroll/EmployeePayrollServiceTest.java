@@ -58,7 +58,6 @@ public class EmployeePayrollServiceTest {
 
     @Test
     public void givenNewNumberForEmployee_whenUpdated_shouldSyncWithDB() throws SQLException {
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readData(IOService.DB_IO);
         employeePayrollService.updateEmployeeNumber("Taylor", "1111333390");
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
@@ -67,7 +66,6 @@ public class EmployeePayrollServiceTest {
 
     @Test
     public void givenNewNumberForEmployee_whenUpdatedUsingPreparedStatement_shouldSyncWithDB() throws SQLException {
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readData(IOService.DB_IO);
         employeePayrollService.updateEmployeeNumberUsingPreparedStatement("Taylor", "0111333395");
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
@@ -76,9 +74,15 @@ public class EmployeePayrollServiceTest {
 
     @Test
     public void givenEmployeeDB_whenRetrivingOnDateRange_shouldReturnEmployeesWithStartDatesInRange() throws SQLException {
-        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
         employeePayrollService.readData(IOService.DB_IO);
         List<EmployeeData> employeeData = employeePayrollService.retrieveEmployeesInDateRange(LocalDate.of(2019, 01, 01), LocalDate.of(2020, 12, 31));
         Assert.assertEquals(2, employeeData.size());
+    }
+
+    @Test
+    public void givenEmployeeDB_whenUsingCountAggregateFunction_shouldReturnCountByGender() throws SQLException {
+        employeePayrollService.readData(IOService.DB_IO);
+        int count = employeePayrollService.getCountByGender("M");
+        Assert.assertEquals(2,count);
     }
 }
