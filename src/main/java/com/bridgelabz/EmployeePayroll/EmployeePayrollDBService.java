@@ -92,6 +92,19 @@ public class EmployeePayrollDBService {
         return employeeDataList;
     }
 
+    public int countOfEmployeesByGender(String gender){
+        String query = String.format("select count(gender) as count from employee where gender = '%s' group by gender;",gender);
+        try(Connection connection = this.getConnection();){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            resultSet.next();
+            return resultSet.getInt("count");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
+
     public List<EmployeeData> getEmployeePayrollData(String name) {
         List<EmployeeData> employeePayrollDataList = null;
         if (employeePayrollDataStatement == null)

@@ -79,6 +79,10 @@ public class EmployeePayrollService {
         return employeePayrollDBService.employeeInDateRange(startDate, endDate);
     }
 
+    public int getCountByGender(String gender) {
+        return employeePayrollDBService.countOfEmployeesByGender(gender);
+    }
+
     private EmployeeData getEmployeePayRollData(String name) {
         return employeePayrollList.stream()
                 .filter(employeePayRollDataItem -> employeePayRollDataItem.name.equals(name))
