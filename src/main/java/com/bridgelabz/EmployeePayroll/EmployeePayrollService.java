@@ -26,7 +26,7 @@ public class EmployeePayrollService {
         this.employeePayrollList = employeePayrollList;
     }
 
-    // Read data from Console or File
+    // Read data from Console or File or Database
     public void readData(IOService ioservice) throws SQLException {
         if (ioservice.equals(IOService.CONSOLE_IO)) {
             Scanner consoleInputReader = new Scanner(System.in);
@@ -58,6 +58,25 @@ public class EmployeePayrollService {
             System.out.println("Writing to console\n" + employeePayrollList);
         else if (ioservice.equals(IOService.FILE_IO))
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
+    }
+    public void updateEmployeeNumber(String name, String newNumber) throws SQLException {
+
+        int result = employeePayrollDBService.updateEmployeeData(name,newNumber);
+        if(result == 0) return;
+        EmployeeData employeePayrollData = this.getEmployeePayRollData(name);
+        if(employeePayrollData != null) employeePayrollData.phone_number = newNumber;
+    }
+
+    private EmployeeData getEmployeePayRollData(String name) {
+        return  employeePayrollList.stream()
+                .filter(employeePayRollDataItem -> employeePayRollDataItem.name.equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean checkEmployeePayrollInSyncWithDB(String name) {
+        List<EmployeeData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
+        return  employeePayrollDataList.get(0).equals(getEmployeePayRollData(name));
     }
 
     // Counting entries of employees when written to file or console
