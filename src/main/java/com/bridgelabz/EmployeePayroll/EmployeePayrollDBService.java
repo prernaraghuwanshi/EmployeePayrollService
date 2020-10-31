@@ -38,7 +38,7 @@ public class EmployeePayrollDBService {
         return this.getEmployeePayrollDataUsingDB(query);
     }
 
-    public EmployeeData addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate, double salary) {
+    public EmployeeData addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate, double salary, int[] departmentId, String[] departmentName) {
         int employee_id = -1;
         Connection connection = null;
         EmployeeData employeeData = null;
@@ -74,10 +74,25 @@ public class EmployeePayrollDBService {
             double netPay = salary - tax;
             String sql = String.format("insert into payroll (employee_id,basic_pay,deductions,taxable_pay,tax,net_pay) values" +
                     "('%s','%s','%s','%s','%s','%s')",employee_id,salary,deductions,taxablePay,tax,netPay);
-            int rowAffected = statement.executeUpdate(sql);
-            if (rowAffected == 1) {
-                employeeData = new EmployeeData(employee_id,name,startDate,phone,gender,address);
+            statement.executeUpdate(sql);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            try {
+                connection.rollback();
+                return employeeData;
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
+        }
+        try(Statement statement = connection.createStatement()){
+            for(int i=0; i< departmentName.length;i++){
+                String sql = String.format("insert into department values ('%s','%s','%s')",departmentId[i],departmentName[i],employee_id);
+                int rowAffected = statement.executeUpdate(sql);
+                if (rowAffected == 1) {
+                    employeeData = new EmployeeData(employee_id,name,startDate,phone,gender,address);
+                }
+            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
             try {
