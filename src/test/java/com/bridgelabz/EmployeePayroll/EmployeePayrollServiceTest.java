@@ -96,7 +96,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenNewEmployee_whenAdded_shouldBeInSyncWithDB() throws SQLException {
         employeePayrollService.readData(IOService.DB_IO);
-        employeePayrollService.addEmployeeToPayroll("Naina","2345678901","India","F",LocalDate.now());
+        employeePayrollService.addEmployeeToPayroll("Naina","2345678901","India","F",LocalDate.now(),50000.00);
         boolean result= employeePayrollService.checkEmployeePayrollInSyncWithDB("Naina");
         Assert.assertTrue(result);
     }
