@@ -117,24 +117,14 @@ public class EmployeePayrollDBService {
         return employeeData;
     }
 
-    public EmployeeData addEmployeeToPayrollUC7(String name, String phone, String address, String gender, LocalDate startDate, double salary) {
-        int employee_id = -1;
-        EmployeeData employeeData = null;
-        String sql = String.format("insert into employee (name,phone_number,address,gender,start)" +
-                "values('%s','%s','%s','%s','%s')", name, phone, address, gender, Date.valueOf(startDate));
-        try (Connection connection = this.getConnection();) {
+    public void deleteEmployee(String name) {
+        String query = String.format("update employee set is_active = 'False' where name = '%s'",name);
+        try(Connection connection = this.getConnection()){
             Statement statement = connection.createStatement();
-            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
-            if (rowAffected == 1) {
-                ResultSet resultSet = statement.getGeneratedKeys();
-                if (resultSet.next())
-                    employee_id = resultSet.getInt(1);
-            }
-            employeeData = new EmployeeData(employee_id, name, startDate, phone, gender, address);
-        } catch (SQLException e) {
-            e.printStackTrace();
+            statement.executeUpdate(query);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
-        return employeeData;
     }
 
     public int updateEmployeeDataUsingStatement(String name, String newNumber) throws SQLException {

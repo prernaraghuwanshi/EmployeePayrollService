@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class EmployeePayrollService {
 
@@ -64,6 +65,11 @@ public class EmployeePayrollService {
         employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,phone,address,gender,startDate,salary,departmentId,departmentName));
     }
 
+    public int deleteEmployee(String name) {
+        employeePayrollDBService.deleteEmployee(name);
+        employeePayrollList= employeePayrollList.stream().filter(emp -> !emp.name.equals(name)).collect(Collectors.toList());
+        return employeePayrollList.size();
+    }
 
     public void updateEmployeeNumber(String name, String newNumber) throws SQLException {
 
