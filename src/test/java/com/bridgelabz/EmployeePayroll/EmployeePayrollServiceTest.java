@@ -85,4 +85,11 @@ public class EmployeePayrollServiceTest {
         int count = employeePayrollService.getCountByGender("M");
         Assert.assertEquals(2,count);
     }
+
+    @Test
+    public void givenEmployeeDB_whenUsingSumAggregateFunction_shouldReturnSumOfSalaryByGender() throws SQLException {
+        employeePayrollService.readData(IOService.DB_IO);
+        double sumSalary = employeePayrollService.getSumOfSalaryByGender("M");
+        Assert.assertEquals(5998,sumSalary,0.0);
+    }
 }
