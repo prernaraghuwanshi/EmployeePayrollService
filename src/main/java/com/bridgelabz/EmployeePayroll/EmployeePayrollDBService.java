@@ -43,6 +43,11 @@ public class EmployeePayrollDBService {
         Connection connection = null;
         EmployeeData employeeData = null;
         connection = this.getConnection();
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         try (Statement statement = connection.createStatement()) {
             String sql = String.format("insert into employee (name,phone_number,address,gender,start)" +
@@ -55,6 +60,12 @@ public class EmployeePayrollDBService {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            try {
+                connection.rollback();
+                return employeeData;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         try(Statement statement = connection.createStatement()){
             double deductions = salary * 0.2;
@@ -69,6 +80,24 @@ public class EmployeePayrollDBService {
             }
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            connection.commit();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally{
+            if(connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
         }
         return employeeData;
     }
