@@ -105,6 +105,19 @@ public class EmployeePayrollDBService {
         return 0;
     }
 
+    public double sumOfSalaryByGender(String gender) {
+        String query = String.format("select sum(basic_pay) as salary from employee e, payroll p where e.employee_id = p.employee_id and e.gender = '%s' group by gender;",gender);
+        try(Connection connection = this.getConnection();){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            resultSet.next();
+            return resultSet.getDouble("salary");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return 0;
+    }
+
     public List<EmployeeData> getEmployeePayrollData(String name) {
         List<EmployeeData> employeePayrollDataList = null;
         if (employeePayrollDataStatement == null)

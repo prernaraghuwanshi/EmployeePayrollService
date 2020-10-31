@@ -83,6 +83,11 @@ public class EmployeePayrollService {
         return employeePayrollDBService.countOfEmployeesByGender(gender);
     }
 
+    public double getSumOfSalaryByGender(String gender) {
+        return  employeePayrollDBService.sumOfSalaryByGender(gender);
+    }
+
+
     private EmployeeData getEmployeePayRollData(String name) {
         return employeePayrollList.stream()
                 .filter(employeePayRollDataItem -> employeePayRollDataItem.name.equals(name))
