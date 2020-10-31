@@ -60,6 +60,11 @@ public class EmployeePayrollService {
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
     }
 
+    public void addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,phone,address,gender,startDate));
+    }
+
+
     public void updateEmployeeNumber(String name, String newNumber) throws SQLException {
 
         int result = employeePayrollDBService.updateEmployeeDataUsingStatement(name, newNumber);
