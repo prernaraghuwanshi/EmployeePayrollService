@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,5 +110,20 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.readData(IOService.DB_IO);
         int result = employeePayrollService.deleteEmployee("Ria");
         Assert.assertEquals(4,result);
+    }
+
+    @Test
+    public void given3Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws SQLException {
+        EmployeeData[] arrayOfEmps = {
+                new EmployeeData(0,"Halsey",LocalDate.now(),"1234123412","F","Chicago"),
+                new EmployeeData(0,"Lauv",LocalDate.now(),"33333333333","M","Tokyo"),
+                new EmployeeData(0,"Beyonce",LocalDate.now(),"2222222222","F","San Francisco")
+        };
+        employeePayrollService.readData(IOService.DB_IO);
+        Instant start = Instant.now();
+        employeePayrollService.addEmployeeToPayroll(Arrays.asList(arrayOfEmps));
+        Instant end = Instant.now();
+        System.out.println("Duration without Thread: "+ Duration.between(start,end));
+        Assert.assertEquals(6,employeePayrollService.countEntries(IOService.DB_IO));
     }
 }
