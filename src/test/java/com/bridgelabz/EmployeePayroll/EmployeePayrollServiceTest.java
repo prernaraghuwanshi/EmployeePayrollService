@@ -116,14 +116,20 @@ public class EmployeePayrollServiceTest {
     public void given3Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws SQLException {
         EmployeeData[] arrayOfEmps = {
                 new EmployeeData(0,"Halsey",LocalDate.now(),"1234123412","F","Chicago"),
-                new EmployeeData(0,"Lauv",LocalDate.now(),"33333333333","M","Tokyo"),
+                new EmployeeData(0,"Mark",LocalDate.now(),"33333333333","M","Tokyo"),
                 new EmployeeData(0,"Beyonce",LocalDate.now(),"2222222222","F","San Francisco")
         };
         employeePayrollService.readData(IOService.DB_IO);
         Instant start = Instant.now();
-        employeePayrollService.addEmployeeToPayroll(Arrays.asList(arrayOfEmps));
+        employeePayrollService.addEmployeeToDB(Arrays.asList(arrayOfEmps));
         Instant end = Instant.now();
         System.out.println("Duration without Thread: "+ Duration.between(start,end));
-        Assert.assertEquals(6,employeePayrollService.countEntries(IOService.DB_IO));
+        employeePayrollService.readData(IOService.DB_IO);
+        Instant startThread = Instant.now();
+        employeePayrollService.addEmployeeToDBWithThreads(Arrays.asList(arrayOfEmps));
+        Instant endThread = Instant.now();
+        System.out.println("Duration with Thread: "+ Duration.between(startThread,endThread));
+        System.out.println(employeePayrollService.employeePayrollList.size());
+        Assert.assertEquals(9,employeePayrollService.countEntries(IOService.DB_IO));
     }
 }
