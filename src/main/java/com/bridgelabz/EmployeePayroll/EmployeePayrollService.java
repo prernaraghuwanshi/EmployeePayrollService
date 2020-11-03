@@ -61,6 +61,16 @@ public class EmployeePayrollService {
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
     }
 
+    public void addEmployeeToPayroll(List<EmployeeData> employeeDataList) {
+        employeeDataList.forEach(employeeData -> {
+            this.addEmployeeToDB(employeeData.name,employeeData.phone_number,employeeData.address,employeeData.gender,employeeData.startDate);
+        });
+    }
+
+    public void addEmployeeToDB(String name, String phone, String address, String gender, LocalDate startDate){
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToDB(name,phone,address,gender,startDate));
+    }
+
     public void addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate,double salary, int[] departmentId, String[] departmentName) {
         employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,phone,address,gender,startDate,salary,departmentId,departmentName));
     }
@@ -117,6 +127,8 @@ public class EmployeePayrollService {
             return employeePayrollList.size();
         else if (ioservice.equals(IOService.FILE_IO))
             return new EmployeePayrollFileIOService().countEntries();
+        else if(ioservice.equals(IOService.DB_IO))
+            return employeePayrollList.size();
         return 0;
     }
 

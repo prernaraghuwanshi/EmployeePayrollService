@@ -22,7 +22,7 @@ public class EmployeePayrollDBService {
     private Connection getConnection() {
         String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?allowPublicKeyRetrieval=true&useSSL=false";
         String userName = "root";
-        String password = "root";
+        String password = "M4A4T!Hs";
         Connection con = null;
         try {
             System.out.println("Connecting to database:" + jdbcURL);
@@ -36,6 +36,27 @@ public class EmployeePayrollDBService {
 
     public List<EmployeeData> readData() throws SQLException {
         return this.getEmployeePayrollDataUsingDB(query);
+    }
+
+    public EmployeeData addEmployeeToDB(String name, String phone, String address, String gender, LocalDate startDate) {
+        int employeeID = -1;
+        EmployeeData employeePayrollData = null;
+        String sqlQuery = String.format("insert into employee (name, gender, start, address, phone_number) " +
+                "values ( '%s', '%s', '%s', '%s','%s');", name, gender, Date.valueOf(startDate), address, phone);
+        try (Connection connection = this.getConnection()) {
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sqlQuery, statement.RETURN_GENERATED_KEYS);
+            if (rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next()) {
+                    employeeID = resultSet.getInt(1);
+                }
+            }
+            employeePayrollData = new EmployeeData(employeeID, name, startDate, phone, gender, address);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return employeePayrollData;
     }
 
     public EmployeeData addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate, double salary, int[] departmentId, String[] departmentName) {
