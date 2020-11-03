@@ -2,9 +2,7 @@ package com.bridgelabz.EmployeePayroll;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EmployeePayrollService {
@@ -61,23 +59,46 @@ public class EmployeePayrollService {
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
     }
 
-    public void addEmployeeToPayroll(List<EmployeeData> employeeDataList) {
+    public void addEmployeeToDB(List<EmployeeData> employeeDataList) {
         employeeDataList.forEach(employeeData -> {
-            this.addEmployeeToDB(employeeData.name,employeeData.phone_number,employeeData.address,employeeData.gender,employeeData.startDate);
+            this.addEmployeeToDB(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate);
         });
     }
 
-    public void addEmployeeToDB(String name, String phone, String address, String gender, LocalDate startDate){
-        employeePayrollList.add(employeePayrollDBService.addEmployeeToDB(name,phone,address,gender,startDate));
+    public void addEmployeeToDBWithThreads(List<EmployeeData> employeeDataList) {
+        Map<Integer, Boolean> employeeAdditionStatus = new HashMap<>();
+        employeeDataList.forEach(employeeData -> {
+            Runnable task = () -> {
+                employeeAdditionStatus.put(employeeData.hashCode(), false);
+                System.out.println("Employee being added: " + Thread.currentThread().getName());
+                this.addEmployeeToDB(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate);
+                employeeAdditionStatus.put(employeeData.hashCode(), true);
+                System.out.println("Employee Added: " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, employeeData.name);
+            thread.start();
+        });
+        while (employeeAdditionStatus.containsValue(false)) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(employeePayrollList);
     }
 
-    public void addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate,double salary, int[] departmentId, String[] departmentName) {
-        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name,phone,address,gender,startDate,salary,departmentId,departmentName));
+    public void addEmployeeToDB(String name, String phone, String address, String gender, LocalDate startDate) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToDB(name, phone, address, gender, startDate));
+    }
+
+    public void addEmployeeToPayroll(String name, String phone, String address, String gender, LocalDate startDate, double salary, int[] departmentId, String[] departmentName) {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, phone, address, gender, startDate, salary, departmentId, departmentName));
     }
 
     public int deleteEmployee(String name) {
         employeePayrollDBService.deleteEmployee(name);
-        employeePayrollList= employeePayrollList.stream().filter(emp -> !emp.name.equals(name)).collect(Collectors.toList());
+        employeePayrollList = employeePayrollList.stream().filter(emp -> !emp.name.equals(name)).collect(Collectors.toList());
         return employeePayrollList.size();
     }
 
@@ -105,7 +126,7 @@ public class EmployeePayrollService {
     }
 
     public double getSumOfSalaryByGender(String gender) {
-        return  employeePayrollDBService.sumOfSalaryByGender(gender);
+        return employeePayrollDBService.sumOfSalaryByGender(gender);
     }
 
 
@@ -127,7 +148,7 @@ public class EmployeePayrollService {
             return employeePayrollList.size();
         else if (ioservice.equals(IOService.FILE_IO))
             return new EmployeePayrollFileIOService().countEntries();
-        else if(ioservice.equals(IOService.DB_IO))
+        else if (ioservice.equals(IOService.DB_IO))
             return employeePayrollList.size();
         return 0;
     }

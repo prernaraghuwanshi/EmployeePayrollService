@@ -1,6 +1,7 @@
 package com.bridgelabz.EmployeePayroll;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class EmployeeData {
 	public int id;
@@ -9,7 +10,6 @@ public class EmployeeData {
 	public String phone_number;
 	public String gender;
 	public String address;
-
 
 	public EmployeeData(int id, String name, LocalDate startDate, String phone_number, String gender, String address) {
 		this.id = id;
@@ -30,6 +30,11 @@ public class EmployeeData {
 				", gender='" + gender + '\'' +
 				", address='" + address + '\'' +
 				'}';
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, name, startDate, phone_number, gender, address);
 	}
 
 	@Override
