@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeePayrollDBService {
+    private int connectionCounter = 0;
     String query = "Select * from employee;";
     private static PreparedStatement employeePayrollDataStatement;
     private static EmployeePayrollDBService employeePayrollDBService;
@@ -19,15 +20,16 @@ public class EmployeePayrollDBService {
         return employeePayrollDBService;
     }
 
-    private Connection getConnection() {
+    private synchronized Connection getConnection() {
+        connectionCounter++;
         String jdbcURL = "jdbc:mysql://localhost:3306/payroll_service?allowPublicKeyRetrieval=true&useSSL=false";
         String userName = "root";
         String password = "M4A4T!Hs";
         Connection con = null;
         try {
-            System.out.println("Connecting to database:" + jdbcURL);
+            System.out.println("Processing Thread: " + Thread.currentThread().getName() + "Connecting to database with ID:" + connectionCounter);
             con = DriverManager.getConnection(jdbcURL, userName, password);
-            System.out.println("Connection is successful!!!!!" + con);
+            System.out.println("Processing Thread: " + Thread.currentThread().getName() + "ID:" + connectionCounter + "Connection is successful!!!!!" + con);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -88,13 +90,13 @@ public class EmployeePayrollDBService {
                 e.printStackTrace();
             }
         }
-        try(Statement statement = connection.createStatement()){
+        try (Statement statement = connection.createStatement()) {
             double deductions = salary * 0.2;
             double taxablePay = salary - deductions;
             double tax = taxablePay * 0.1;
             double netPay = salary - tax;
             String sql = String.format("insert into payroll (employee_id,basic_pay,deductions,taxable_pay,tax,net_pay) values" +
-                    "('%s','%s','%s','%s','%s','%s')",employee_id,salary,deductions,taxablePay,tax,netPay);
+                    "('%s','%s','%s','%s','%s','%s')", employee_id, salary, deductions, taxablePay, tax, netPay);
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -105,12 +107,12 @@ public class EmployeePayrollDBService {
                 e.printStackTrace();
             }
         }
-        try(Statement statement = connection.createStatement()){
-            for(int i=0; i< departmentName.length;i++){
-                String sql = String.format("insert into department values ('%s','%s','%s')",departmentId[i],departmentName[i],employee_id);
+        try (Statement statement = connection.createStatement()) {
+            for (int i = 0; i < departmentName.length; i++) {
+                String sql = String.format("insert into department values ('%s','%s','%s')", departmentId[i], departmentName[i], employee_id);
                 int rowAffected = statement.executeUpdate(sql);
                 if (rowAffected == 1) {
-                    employeeData = new EmployeeData(employee_id,name,startDate,phone,gender,address);
+                    employeeData = new EmployeeData(employee_id, name, startDate, phone, gender, address);
                 }
             }
 
@@ -126,8 +128,8 @@ public class EmployeePayrollDBService {
             connection.commit();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        } finally{
-            if(connection != null) {
+        } finally {
+            if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException throwables) {
@@ -139,8 +141,8 @@ public class EmployeePayrollDBService {
     }
 
     public void deleteEmployee(String name) {
-        String query = String.format("update employee set is_active = 'False' where name = '%s'",name);
-        try(Connection connection = this.getConnection()){
+        String query = String.format("update employee set is_active = 'False' where name = '%s'", name);
+        try (Connection connection = this.getConnection()) {
             Statement statement = connection.createStatement();
             statement.executeUpdate(query);
         } catch (SQLException throwables) {
