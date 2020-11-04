@@ -78,13 +78,13 @@ public class EmployeePayrollService {
             Thread thread = new Thread(task, employeeData.name);
             thread.start();
         });
-        while (employeeAdditionStatus.containsValue(false)) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        while (employeeAdditionStatus.containsValue(false)) {
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
         System.out.println(employeePayrollList);
     }
 
