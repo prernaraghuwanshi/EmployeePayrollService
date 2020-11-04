@@ -113,7 +113,7 @@ public class EmployeePayrollServiceTest {
     }
 
     @Test
-    public void given3Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws SQLException, InterruptedException {
+    public void given3Employees_whenAddedAsEmployee_shouldMatchEmployeeEntries() throws SQLException, InterruptedException {
         EmployeeData[] arrayOfEmps = {
                 new EmployeeData(0,"Halsey",LocalDate.now(),"1234123412","F","Chicago"),
                 new EmployeeData(0,"Mark",LocalDate.now(),"33333333333","M","Tokyo"),
@@ -130,7 +130,21 @@ public class EmployeePayrollServiceTest {
         Thread.sleep(500);
         Instant endThread = Instant.now();
         System.out.println("Duration with Thread: "+ Duration.between(startThread,endThread));
-        System.out.println(employeePayrollService.employeePayrollList.size());
         Assert.assertEquals(9,employeePayrollService.countEntries(IOService.DB_IO));
+    }
+
+    @Test
+    public void given2Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws SQLException, InterruptedException {
+        EmployeeData[] arrayOfEmployees = {
+                new EmployeeData(0,"Ria",LocalDate.now(),"2345678901","F","Jaipur",50000.00, new int[]{102}, new String[]{"Dept2"}),
+                new EmployeeData(0, "Sanya", LocalDate.now(),"34343434", "F","Bhopal", 3000000.0 , new int[]{101}, new String[]{"Dept1"}),
+        };
+        employeePayrollService.readData(IOService.DB_IO);
+        Instant threadStart = Instant.now();
+        employeePayrollService.addEmployeeWithThreads(Arrays.asList(arrayOfEmployees));
+        Thread.sleep(6000);
+        Instant threadEnd = Instant.now();
+        System.out.println("Duration for complete execution with Threads: " + Duration.between(threadStart, threadEnd));
+        Assert.assertEquals(11, employeePayrollService.countEntries(IOService.DB_IO));
     }
 }
