@@ -88,6 +88,29 @@ public class EmployeePayrollService {
         System.out.println(employeePayrollList);
     }
 
+    public void addEmployeeWithThreads(List<EmployeeData> employeeDataList) {
+        Map<Integer, Boolean> employeeAdditionStatus = new HashMap<>();
+        employeeDataList.forEach(employeeData -> {
+            Runnable task = () -> {
+                employeeAdditionStatus.put(employeeData.hashCode(), false);
+                System.out.println("Employee being added: " + Thread.currentThread().getName());
+                this.addEmployeeToPayroll(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate,employeeData.salary,employeeData.departmentId,employeeData.departmentName);
+                employeeAdditionStatus.put(employeeData.hashCode(), true);
+                System.out.println("Employee Added: " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, employeeData.name);
+            thread.start();
+        });
+//        while (employeeAdditionStatus.containsValue(false)) {
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+        System.out.println(employeePayrollList);
+    }
+
     public void addEmployeeToDB(String name, String phone, String address, String gender, LocalDate startDate) {
         employeePayrollList.add(employeePayrollDBService.addEmployeeToDB(name, phone, address, gender, startDate));
     }
