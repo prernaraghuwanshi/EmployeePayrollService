@@ -59,6 +59,13 @@ public class EmployeePayrollService {
             new EmployeePayrollFileIOService().writeData(employeePayrollList);
     }
 
+    public void addEmployeeToPayroll(EmployeeData employeeData, IOService ioService) {
+        if(ioService.equals(IOService.DB_IO))
+            this.addEmployeeToDB(employeeData.name,employeeData.phone_number,employeeData.address,employeeData.gender,employeeData.startDate);
+        else
+            employeePayrollList.add(employeeData);
+    }
+
     public void addEmployeeToDB(List<EmployeeData> employeeDataList) {
         employeeDataList.forEach(employeeData -> {
             this.addEmployeeToDB(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate);
