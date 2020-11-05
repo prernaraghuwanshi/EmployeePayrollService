@@ -108,7 +108,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenEmployee_whenDeleted_shouldBeInSyncWithDB() throws SQLException {
         employeePayrollService.readData(IOService.DB_IO);
-        int result = employeePayrollService.deleteEmployee("Ria");
+        int result = employeePayrollService.deleteEmployee("Ria", IOService.DB_IO);
         Assert.assertEquals(4,result);
     }
 
