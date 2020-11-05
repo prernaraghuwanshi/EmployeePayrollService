@@ -60,8 +60,8 @@ public class EmployeePayrollService {
     }
 
     public void addEmployeeToPayroll(EmployeeData employeeData, IOService ioService) {
-        if(ioService.equals(IOService.DB_IO))
-            this.addEmployeeToDB(employeeData.name,employeeData.phone_number,employeeData.address,employeeData.gender,employeeData.startDate);
+        if (ioService.equals(IOService.DB_IO))
+            this.addEmployeeToDB(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate);
         else
             employeePayrollList.add(employeeData);
     }
@@ -125,10 +125,16 @@ public class EmployeePayrollService {
         return employeePayrollList.size();
     }
 
-    public void updateEmployeeNumber(String name, String newNumber) throws SQLException {
-
-        int result = employeePayrollDBService.updateEmployeeDataUsingStatement(name, newNumber);
-        if (result == 0) return;
+    public void updateEmployeeNumber(String name, String newNumber, IOService ioService) {
+        if (ioService.equals(IOService.DB_IO)) {
+            int result = 0;
+            try {
+                result = employeePayrollDBService.updateEmployeeDataUsingStatement(name, newNumber);
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            if (result == 0) return;
+        }
         EmployeeData employeePayrollData = this.getEmployeePayRollData(name);
         if (employeePayrollData != null) employeePayrollData.phone_number = newNumber;
     }
@@ -153,7 +159,7 @@ public class EmployeePayrollService {
     }
 
 
-    private EmployeeData getEmployeePayRollData(String name) {
+    public EmployeeData getEmployeePayRollData(String name) {
         return employeePayrollList.stream()
                 .filter(employeePayRollDataItem -> employeePayRollDataItem.name.equals(name))
                 .findFirst()
