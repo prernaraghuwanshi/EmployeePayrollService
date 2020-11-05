@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class EmployeePayrollService {
 
     public enum IOService {
-        CONSOLE_IO, FILE_IO, DB_IO
+        CONSOLE_IO, FILE_IO, DB_IO, REST_IO
     }
 
     public static List<EmployeeData> employeePayrollList;
@@ -22,7 +22,7 @@ public class EmployeePayrollService {
     //Parameterized Constructor
     public EmployeePayrollService(List<EmployeeData> employeePayrollList) {
         this();
-        this.employeePayrollList = employeePayrollList;
+        this.employeePayrollList = new ArrayList<>(employeePayrollList);
     }
 
     // Read data from Console or File or Database
@@ -94,20 +94,13 @@ public class EmployeePayrollService {
             Runnable task = () -> {
                 employeeAdditionStatus.put(employeeData.hashCode(), false);
                 System.out.println("Employee being added: " + Thread.currentThread().getName());
-                this.addEmployeeToPayroll(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate,employeeData.salary,employeeData.departmentId,employeeData.departmentName);
+                this.addEmployeeToPayroll(employeeData.name, employeeData.phone_number, employeeData.address, employeeData.gender, employeeData.startDate, employeeData.salary, employeeData.departmentId, employeeData.departmentName);
                 employeeAdditionStatus.put(employeeData.hashCode(), true);
                 System.out.println("Employee Added: " + Thread.currentThread().getName());
             };
             Thread thread = new Thread(task, employeeData.name);
             thread.start();
         });
-//        while (employeeAdditionStatus.containsValue(false)) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
         System.out.println(employeePayrollList);
     }
 
@@ -167,13 +160,10 @@ public class EmployeePayrollService {
 
     // Counting entries of employees when written to file or console
     public long countEntries(IOService ioservice) {
-        if (ioservice.equals(IOService.CONSOLE_IO))
-            return employeePayrollList.size();
-        else if (ioservice.equals(IOService.FILE_IO))
+        if (ioservice.equals(IOService.FILE_IO))
             return new EmployeePayrollFileIOService().countEntries();
-        else if (ioservice.equals(IOService.DB_IO))
+        else
             return employeePayrollList.size();
-        return 0;
     }
 
     // Print Data
