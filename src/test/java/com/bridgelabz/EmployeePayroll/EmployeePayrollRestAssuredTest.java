@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -78,6 +79,22 @@ public class EmployeePayrollRestAssuredTest {
         }
         long entries = employeePayrollService.countEntries(REST_IO);
         Assert.assertEquals(8,entries);
+    }
+
+    @Test
+    public void givenNewNumberForEmployee_whenUpdated_shouldMatch200Response() {
+        EmployeeData[] arrayOfEmps = getEmployeeList();
+        employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
+        employeePayrollService.updateEmployeeNumber("Halsey","2233112233",REST_IO);
+        EmployeeData employeeData = employeePayrollService.getEmployeePayRollData("Halsey");
+
+        String empJson = new Gson().toJson(employeeData);
+        RequestSpecification request = RestAssured.given();
+        request.header("Content-Type","application/json");
+        request.body(empJson);
+        Response response = request.put("/employees/"+employeeData.id);
+        int statusCode = response.getStatusCode();
+        Assert.assertEquals(200,statusCode);
     }
 
 }

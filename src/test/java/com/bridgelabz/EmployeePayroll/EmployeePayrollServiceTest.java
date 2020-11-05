@@ -61,7 +61,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenNewNumberForEmployee_whenUpdated_shouldSyncWithDB() throws SQLException {
         employeePayrollService.readData(IOService.DB_IO);
-        employeePayrollService.updateEmployeeNumber("Taylor", "1111333390");
+        employeePayrollService.updateEmployeeNumber("Taylor", "1111333390", IOService.DB_IO);
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Taylor");
         Assert.assertTrue(result);
     }
