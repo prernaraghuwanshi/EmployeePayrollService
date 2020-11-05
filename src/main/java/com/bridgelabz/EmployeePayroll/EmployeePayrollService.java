@@ -119,8 +119,9 @@ public class EmployeePayrollService {
         employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, phone, address, gender, startDate, salary, departmentId, departmentName));
     }
 
-    public int deleteEmployee(String name) {
-        employeePayrollDBService.deleteEmployee(name);
+    public int deleteEmployee(String name, IOService ioService) {
+        if(ioService.equals(IOService.DB_IO))
+            employeePayrollDBService.deleteEmployee(name);
         employeePayrollList = employeePayrollList.stream().filter(emp -> !emp.name.equals(name)).collect(Collectors.toList());
         return employeePayrollList.size();
     }
