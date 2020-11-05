@@ -30,6 +30,14 @@ public class EmployeePayrollRestAssuredTest {
         return arrayOfEmps;
     }
 
+    public Response addEmployeeToJsonServer(EmployeeData employeeData) {
+        String empJson = new Gson().toJson(employeeData);
+        RequestSpecification request = RestAssured.given();
+        request.header("Content-Type","application/json");
+        request.body(empJson);
+        return request.post("/employees");
+    }
+
     @Test
     public void givenEmployeeDataInJSONServer_whenRetrieved_shouldMatchTheCount(){
         EmployeeData[] arrayOfEmps = getEmployeeList();
@@ -52,11 +60,24 @@ public class EmployeePayrollRestAssuredTest {
         Assert.assertEquals(5,entries);
     }
 
-    public Response addEmployeeToJsonServer(EmployeeData employeeData) {
-        String empJson = new Gson().toJson(employeeData);
-        RequestSpecification request = RestAssured.given();
-        request.header("Content-Type","application/json");
-        request.body(empJson);
-        return request.post("/employees");
+    @Test
+    public void givenListOfNewEmployees_whenAdded_shouldMatch201ResponseAndCount(){
+        EmployeeData[] arrayOfEmps = getEmployeeList();
+        employeePayrollService = new EmployeePayrollService(Arrays.asList(arrayOfEmps));
+        EmployeeData[] arrayOfNewEmps = {
+                new EmployeeData(0,"Halsey",LocalDate.now(),"1234123412","F","Chicago"),
+                new EmployeeData(0,"Mark",LocalDate.now(),"33333333333","M","Tokyo"),
+                new EmployeeData(0,"Beyonce",LocalDate.now(),"2222222222","F","San Francisco")
+        };
+        for(EmployeeData employeeData : arrayOfNewEmps){
+            Response response = addEmployeeToJsonServer(employeeData);
+            int statusCode = response.getStatusCode();
+            Assert.assertEquals(201,statusCode);
+            employeeData = new Gson().fromJson(response.asString(),EmployeeData.class);
+            employeePayrollService.addEmployeeToPayroll(employeeData, REST_IO);
+        }
+        long entries = employeePayrollService.countEntries(REST_IO);
+        Assert.assertEquals(8,entries);
     }
+
 }
